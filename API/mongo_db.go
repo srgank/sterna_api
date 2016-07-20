@@ -9,7 +9,7 @@ import (
 	//	"net/http"
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/testRandom/structs"
+	"github.com/sterna_api/API/structs"
 )
 
 func CreateConnectionMSSQLDB() *sql.DB {
@@ -165,7 +165,7 @@ func GetKomintentListMYSQL(search_query structs.SearchByItem, conn *sql.DB) stru
 	queryString := ""
 
 	queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
-		" zabeleska2, rabat, grad from komintenti where naziv like '" + art + "' LIMIT " + lim + "," + off
+		" zabeleska2, rabat, grad from komintenti where naziv like '" + art + "' LIMIT " + off + "," + lim
 
 	statement, err := conn.Prepare(queryString)
 	if err != nil {
@@ -246,7 +246,7 @@ func GetKomintentListMYSQL(search_query structs.SearchByItem, conn *sql.DB) stru
 			komItem.Rabat = *rabat
 		}
 		if grad != nil {
-			komItem.Zabeleska2 = base64.StdEncoding.EncodeToString([]byte(*grad))
+			komItem.Grad = base64.StdEncoding.EncodeToString([]byte(*grad))
 		}
 
 		kom1.Properties = append(kom1.Properties, komItem)
