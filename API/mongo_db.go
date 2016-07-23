@@ -36,6 +36,8 @@ func GetArticleListMYSQL(search_query structs.SearchByItem, conn *sql.DB) struct
 		queryString = "select id, sifra, artikal, edm, ref, kataloski_broj, ddv, proizvoditel, kategorija  from artikli where artikal like '" + art + "' LIMIT " + off + "," + lim
 	} else if src == "sifra" {
 		queryString = "select id, sifra, artikal, edm, ref, kataloski_broj, ddv, proizvoditel, kategorija  from artikli where sifra = '" + art + "' LIMIT " + off + "," + lim
+	} else if src == "id" {
+		queryString = "select id, sifra, artikal, edm, ref, kataloski_broj, ddv, proizvoditel, kategorija  from artikli where id = '" + art + "' LIMIT " + off + "," + lim
 	} else {
 	}
 
@@ -119,13 +121,13 @@ func InsertNewArticleMYSQL(artNew structs.ArticleItem, conn *sql.DB) bool {
 
 func UpdateArticleMYSQL(artNew structs.ArticleItem, conn *sql.DB) bool {
 	stat := false
-	statement, err := conn.Prepare("UPDATE artikli  set sifra = ?, artikal = ?, edm = ?, ref = ?, kataloski_broj = ?, ddv = ?, proizvoditel = ?, kategorija = ? where sifra = ?")
-
+	statement, err := conn.Prepare("UPDATE artikli  set sifra = ?, artikal = ?, edm = ?, ref = ?, kataloski_broj = ?, ddv = ?, proizvoditel = ?, kategorija = ? where id = ?")
+	fmt.Printf("UpdateArticleMYSQL ------------------------------------------------------------------------------------", artNew)
 	if err != nil {
 		fmt.Println(err)
 	}
 	conn.Ping()
-	_, err = statement.Exec(artNew.Sifra, artNew.Artikal, artNew.Edm, artNew.Ref, artNew.Kataloski_broj, artNew.Ddv, artNew.Proizvoditel, artNew.Kategorija, artNew.Sifra)
+	_, err = statement.Exec(artNew.Sifra, artNew.Artikal, artNew.Edm, artNew.Ref, artNew.Kataloski_broj, artNew.Ddv, artNew.Proizvoditel, artNew.Kategorija, artNew.Id)
 
 	if err != nil {
 		stat = false
@@ -159,13 +161,22 @@ func GetKomintentListMYSQL(search_query structs.SearchByItem, conn *sql.DB) stru
 
 	lim := search_query.Limit
 	off := search_query.Offset
-	//	src := search_query.SearchBy
+	src := search_query.SearchBy
 	art := search_query.SearchName
 	fmt.Println(search_query)
 	queryString := ""
 
-	queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
-		" zabeleska2, rabat, grad from komintenti where naziv like '" + art + "' LIMIT " + off + "," + lim
+	if src == "naziv" {
+		queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
+			" zabeleska2, rabat, grad from komintenti where naziv like '" + art + "' LIMIT " + off + "," + lim
+	} else if src == "sifra" {
+		queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
+			" zabeleska2, rabat, grad from komintenti where sifra like '" + art + "' LIMIT " + off + "," + lim
+	} else if src == "id" {
+		queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
+			" zabeleska2, rabat, grad from komintenti where id like '" + art + "' LIMIT " + off + "," + lim
+	} else {
+	}
 
 	statement, err := conn.Prepare(queryString)
 	if err != nil {
@@ -279,8 +290,8 @@ func InsertNewKomintentMYSQL(komNew structs.KomintentiItem, conn *sql.DB) bool {
 
 func UpdateKomintentMYSQL(komUpd structs.KomintentiItem, conn *sql.DB) bool {
 	stat := false
-	sql_statement := "UPDATE artikli  set sifra = ?, naziv = ?, adresa = ?, tel = ?, mobil = ?, zirosmetka = ?, edb = ?, deponent = ?,  " +
-		"sifdejnost = ?, mb = ?, zabeleska1 = ?, zabeleska2 = ?, rabat = ?, grad = ? where sifra = ?"
+	sql_statement := "UPDATE komintenti  set sifra = ?, naziv = ?, adresa = ?, tel = ?, mobil = ?, zirosmetka = ?, edb = ?, deponent = ?,  " +
+		"sifdejnost = ?, mb = ?, zabeleska1 = ?, zabeleska2 = ?, rabat = ?, grad = ? where id = ?"
 
 	statement, err := conn.Prepare(sql_statement)
 
@@ -289,7 +300,7 @@ func UpdateKomintentMYSQL(komUpd structs.KomintentiItem, conn *sql.DB) bool {
 	}
 	conn.Ping()
 	_, err = statement.Exec(komUpd.Sifra, komUpd.Naziv, komUpd.Adresa, komUpd.Tel, komUpd.Mobil, komUpd.Zirosmetka, komUpd.Edb, komUpd.Deponent,
-		komUpd.Sifdejnost, komUpd.Mb, komUpd.Zabeleska1, komUpd.Zabeleska2, komUpd.Rabat, komUpd.Grad, komUpd.Sifra)
+		komUpd.Sifdejnost, komUpd.Mb, komUpd.Zabeleska1, komUpd.Zabeleska2, komUpd.Rabat, komUpd.Grad, komUpd.Id)
 
 	if err != nil {
 		stat = false

@@ -33,6 +33,18 @@ func InsertNewArticle(w http.ResponseWriter, r *http.Request) {
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
+	//	{
+	//		"id": 10000123,
+	//		"sifra":"ABC-0025",
+	//		"artikal": "TEST ABC",
+	//		"edm":"kom",
+	//		"ref":"R-002",
+	//		"kataloski_broj": "54-56666-89",
+	//		"ddv":5,
+	//		"proizvoditel":"ATL",
+	//		"kategorija":"KT-5"
+	//	}
+
 	conn := CreateConnectionMSSQLDB()
 	defer conn.Close()
 	var stat bool
@@ -100,14 +112,14 @@ func GetKomintentList(w http.ResponseWriter, r *http.Request) {
 
 func InsertNewKomintent(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
-	var sqlData structs.ArticleItem
+	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	conn := CreateConnectionMSSQLDB()
 	defer conn.Close()
 	var stat bool
 	if conn != nil {
-		stat = InsertNewArticleMYSQL(sqlData, conn)
+		stat = InsertNewKomintentMYSQL(sqlData, conn)
 	}
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
