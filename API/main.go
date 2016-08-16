@@ -35,5 +35,15 @@ func main() {
 	m.Post("/update_komintent", UpdateKomintent)
 	m.Post("/delete_komintent", DeleteKomintent)
 
+	m.Post("/get_dokumenti_list", GetDokumentList)
+	m.Post("/insert_dokumenti", InsertNewDokument)
+	m.Post("/update_dokumenti", UpdateDokument)
+	m.Post("/delete_dokumenti", DeleteDokument)
+
+	m.Post("/get_dokumenti_detail_list", GetDokumentDetailList)
+	m.Post("/insert_dokumenti_detail", InsertNewDokumentDetail)
+	m.Post("/update_dokumenti_detail", UpdateDokumentDetail)
+	m.Post("/delete_dokumenti_detail", DeleteDokumentDetail)
+
 	http.ListenAndServe(":5002", m)
 }

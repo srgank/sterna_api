@@ -100,14 +100,14 @@ func GetKomintentList(w http.ResponseWriter, r *http.Request) {
 
 func InsertNewKomintent(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
-	var sqlData structs.ArticleItem
+	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	conn := CreateConnectionMSSQLDB()
 	defer conn.Close()
 	var stat bool
 	if conn != nil {
-		stat = InsertNewArticleMYSQL(sqlData, conn)
+		stat = InsertNewKomintentMYSQL(sqlData, conn)
 	}
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
@@ -144,6 +144,146 @@ func DeleteKomintent(w http.ResponseWriter, r *http.Request) {
 	var stat bool
 	if conn != nil {
 		stat = DeleteKomintentMYSQL(sqlData, conn)
+	}
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func GetDokumentList(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.SearchByItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var t_art structs.Dokumenti
+	if conn != nil {
+		t_art = GetDokumentListMYSQL(sqlData, conn)
+	}
+	s, _ := json.Marshal(t_art)
+	fmt.Println(string([]byte(s)))
+	w.Write([]byte(s))
+}
+
+func InsertNewDokument(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var stat bool
+	if conn != nil {
+		stat = InsertNewDokumentMYSQL(sqlData, conn)
+	}
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func UpdateDokument(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var stat bool
+	if conn != nil {
+		stat = UpdateDokumentMYSQL(sqlData, conn)
+	}
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func DeleteDokument(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var stat bool
+	if conn != nil {
+		stat = DeleteDokumentMYSQL(sqlData, conn)
+	}
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func GetDokumentDetailList(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.SearchByItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var t_art structs.DokumentiDetail
+	if conn != nil {
+		t_art = GetDocumentDetailListMYSQL(sqlData, conn)
+	}
+	s, _ := json.Marshal(t_art)
+	fmt.Println(string([]byte(s)))
+	w.Write([]byte(s))
+}
+
+func InsertNewDokumentDetail(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiDetailItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var stat bool
+	if conn != nil {
+		stat = InsertNewDokumentDetailMYSQL(sqlData, conn)
+	}
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func UpdateDokumentDetail(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiDetailItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var stat bool
+	if conn != nil {
+		stat = UpdateDokumentDetailMYSQL(sqlData, conn)
+	}
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func DeleteDokumentDetail(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiDetailItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	conn := CreateConnectionMSSQLDB()
+	defer conn.Close()
+	var stat bool
+	if conn != nil {
+		stat = DeleteDokumentDetailMYSQL(sqlData, conn)
 	}
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)

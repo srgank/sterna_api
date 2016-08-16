@@ -20,4 +20,6 @@ type SearchByItem struct {
 	Offset     string `bson:"offset" json:"offset"`
 	SearchBy   string `bson:"search_by" json:"search_by"`
 	SearchName string `bson:"search_name" json:"search_name"`
+	Dok_ID     string `bson:"dok_id" json:"dok_id"`
+	Dok_TIP    string `bson:"dok_tip" json:"dok_tip"`
 }
