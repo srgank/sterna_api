@@ -333,6 +333,7 @@ func GetDokumentListMYSQL(search_query structs.SearchByItem, conn *sql.DB) struc
 
 	lim := search_query.Limit
 	off := search_query.Offset
+	dok_tip := search_query.Dok_TIP
 
 	fmt.Println(search_query)
 	queryString := ""
@@ -342,7 +343,10 @@ func GetDokumentListMYSQL(search_query structs.SearchByItem, conn *sql.DB) struc
 		" DDV_DEN, DRUGI_TROSOCI_DEN, DOK_STATUS, USER_ID, KOMENTAR, MAG_ID, OBJECT_ID " +
 		" from dokumenti d " +
 		" left join komintenti k on d.KOMINTENT_ID = k.id " +
-		" left join komintenti p on d.KOMINTENT_ID = p.id LIMIT " + off + "," + lim
+		" left join komintenti p on d.KOMINTENT_ID = p.id " +
+		" where d.DOCUMENT_TIP = " + dok_tip +
+		" ORDER BY DOCUMENT_ID DESC " +
+		" LIMIT " + off + "," + lim
 
 	statement, err := conn.Prepare(queryString)
 	if err != nil {
