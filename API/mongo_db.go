@@ -173,12 +173,6 @@ func GetKomintentListMYSQL(search_query structs.SearchByItem, conn *sql.DB) stru
 	} else if src == "sifra" {
 		queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
 			" zabeleska2, rabat, grad from komintenti where sifra like '" + art + "' LIMIT " + off + "," + lim
-<<<<<<< HEAD
-=======
-	} else if src == "id" {
-		queryString = "select id, sifra, naziv, adresa, tel, mobil, zirosmetka, edb, deponent, sifdejnost, mb, zabeleska1," +
-			" zabeleska2, rabat, grad from komintenti where id like '" + art + "' LIMIT " + off + "," + lim
->>>>>>> d001b4570cda14c62759fee0cab9441002b24c98
 	} else {
 	}
 
