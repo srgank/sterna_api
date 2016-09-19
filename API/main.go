@@ -24,26 +24,27 @@ func ClassicA() *martini.ClassicMartini {
 }
 
 func main() {
+	InitMongoDB()
 	m := ClassicA()
-	m.Post("/get_article_list", GetArticleList)
-	m.Post("/insert_article", InsertNewArticle)
-	m.Post("/update_article", UpdateArticle)
-	m.Post("/delete_article", DeleteArticle)
+	m.Post("/get_article_list", GetArticleListMongo)
+	m.Post("/insert_article", InsertNewArticleMongo)
+	m.Post("/update_article", UpdateArticleMongo)
+	m.Post("/delete_article", DeleteArticleMongo)
 
-	m.Post("/get_komintent_list", GetKomintentList)
-	m.Post("/insert_komintent", InsertNewKomintent)
-	m.Post("/update_komintent", UpdateKomintent)
-	m.Post("/delete_komintent", DeleteKomintent)
+	m.Post("/get_komintent_list", GeKomintentiListMongo)
+	m.Post("/insert_komintent", InsertNewKomintentiMongo)
+	m.Post("/update_komintent", UpdateKomintentiMongo)
+	m.Post("/delete_komintent", DeleteKomintentiMongo)
 
-	m.Post("/get_dokumenti_list", GetDokumentList)
-	m.Post("/insert_dokumenti", InsertNewDokument)
-	m.Post("/update_dokumenti", UpdateDokument)
-	m.Post("/delete_dokumenti", DeleteDokument)
+	m.Post("/get_dokumenti_list", GetDokumentListMongo)
+	m.Post("/insert_dokumenti", InsertNewDokumentMongo)
+	m.Post("/update_dokumenti", UpdateDokumentMongo)
+	m.Post("/delete_dokumenti", DeleteDokumentMongo)
 
-	m.Post("/get_dokumenti_detail_list", GetDokumentDetailList)
-	m.Post("/insert_dokumenti_detail", InsertNewDokumentDetail)
-	m.Post("/update_dokumenti_detail", UpdateDokumentDetail)
-	m.Post("/delete_dokumenti_detail", DeleteDokumentDetail)
+	//	m.Post("/get_dokumenti_detail_list", GetDokumentDetailListMongo)
+	//	m.Post("/insert_dokumenti_detail", InsertNewDokumentDetailMongo)
+	//	m.Post("/update_dokumenti_detail", UpdateDokumentDetailMongo)
+	//	m.Post("/delete_dokumenti_detail", DeleteDokumentDetailMongo)
 
 	http.ListenAndServe(":5002", m)
 }

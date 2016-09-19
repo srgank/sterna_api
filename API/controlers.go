@@ -12,45 +12,25 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func GetArticleList(w http.ResponseWriter, r *http.Request) {
+func GetArticleListMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
+	fmt.Println("sqlData", sqlData)
+	_, s := GetArticleListMYSQLMongo(sqlData)
 
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var t_art structs.Article
-	if conn != nil {
-		t_art = GetArticleListMYSQL(sqlData, conn)
-	}
-	s, _ := json.Marshal(t_art)
-	fmt.Println(string([]byte(s)))
+	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
-func InsertNewArticle(w http.ResponseWriter, r *http.Request) {
+func InsertNewArticleMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
-	//	{
-	//		"id": 10000123,
-	//		"sifra":"ABC-0025",
-	//		"artikal": "TEST ABC",
-	//		"edm":"kom",
-	//		"ref":"R-002",
-	//		"kataloski_broj": "54-56666-89",
-	//		"ddv":5,
-	//		"proizvoditel":"ATL",
-	//		"kategorija":"KT-5"
-	//	}
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = InsertNewArticleMYSQL(sqlData, conn)
-	}
+	stat = InsertNewArticleMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -58,17 +38,12 @@ func InsertNewArticle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateArticle(w http.ResponseWriter, r *http.Request) {
+func UpdateArticleMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = UpdateArticleMYSQL(sqlData, conn)
-	}
+	stat = UpdateArticleMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -76,17 +51,12 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteArticle(w http.ResponseWriter, r *http.Request) {
+func DeleteArticleMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = DeleteArticleMYSQL(sqlData, conn)
-	}
+	stat = DeleteArticleMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -94,33 +64,27 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetKomintentList(w http.ResponseWriter, r *http.Request) {
+//-------------------------------------------------------------------------------------
+
+func GeKomintentiListMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
+	fmt.Println("sqlData", sqlData)
+	_, s := GetKomintentiListMYSQLMongo(sqlData)
 
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var t_art structs.Komintenti
-	if conn != nil {
-		t_art = GetKomintentListMYSQL(sqlData, conn)
-	}
-	s, _ := json.Marshal(t_art)
-	fmt.Println(string([]byte(s)))
+	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
-func InsertNewKomintent(w http.ResponseWriter, r *http.Request) {
+func InsertNewKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = InsertNewKomintentMYSQL(sqlData, conn)
-	}
+	stat = InsertNewKomintentiMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -128,17 +92,12 @@ func InsertNewKomintent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateKomintent(w http.ResponseWriter, r *http.Request) {
+func UpdateKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = UpdateKomintentMYSQL(sqlData, conn)
-	}
+	stat = UpdateKomintentiMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -146,17 +105,12 @@ func UpdateKomintent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteKomintent(w http.ResponseWriter, r *http.Request) {
+func DeleteKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = DeleteKomintentMYSQL(sqlData, conn)
-	}
+	stat = DeleteKomintentiMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -164,33 +118,27 @@ func DeleteKomintent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetDokumentList(w http.ResponseWriter, r *http.Request) {
+//-------------------------------------------------------------------------------------
+
+func GetDokumentListMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
+	fmt.Println("sqlData", sqlData)
+	_, s := GetDokumentiListMYSQLMongo(sqlData)
 
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var t_art structs.Dokumenti
-	if conn != nil {
-		t_art = GetDokumentListMYSQL(sqlData, conn)
-	}
-	s, _ := json.Marshal(t_art)
-	fmt.Println(string([]byte(s)))
+	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
-func InsertNewDokument(w http.ResponseWriter, r *http.Request) {
+func InsertNewDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.DokumentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = InsertNewDokumentMYSQL(sqlData, conn)
-	}
+	stat = InsertNewDokumentMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -198,17 +146,12 @@ func InsertNewDokument(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateDokument(w http.ResponseWriter, r *http.Request) {
+func UpdateDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.DokumentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = UpdateDokumentMYSQL(sqlData, conn)
-	}
+	stat = UpdateDokumentMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -216,17 +159,12 @@ func UpdateDokument(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteDokument(w http.ResponseWriter, r *http.Request) {
+func DeleteDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
 	var sqlData structs.DokumentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
 	var stat bool
-	if conn != nil {
-		stat = DeleteDokumentMYSQL(sqlData, conn)
-	}
+	stat = DeleteDokumentiMYSQLMongo(sqlData)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -234,72 +172,4 @@ func DeleteDokument(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetDokumentDetailList(w http.ResponseWriter, r *http.Request) {
-	Respbody, _ := ioutil.ReadAll(r.Body)
-	var sqlData structs.SearchByItem
-	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var t_art structs.DokumentiDetail
-	if conn != nil {
-		t_art = GetDocumentDetailListMYSQL(sqlData, conn)
-	}
-	s, _ := json.Marshal(t_art)
-	fmt.Println(string([]byte(s)))
-	w.Write([]byte(s))
-}
-
-func InsertNewDokumentDetail(w http.ResponseWriter, r *http.Request) {
-	Respbody, _ := ioutil.ReadAll(r.Body)
-	var sqlData structs.DokumentiDetailItem
-	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var stat bool
-	if conn != nil {
-		stat = InsertNewDokumentDetailMYSQL(sqlData, conn)
-	}
-	if stat == true {
-		w.WriteHeader(http.StatusNoContent)
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-	}
-}
-
-func UpdateDokumentDetail(w http.ResponseWriter, r *http.Request) {
-	Respbody, _ := ioutil.ReadAll(r.Body)
-	var sqlData structs.DokumentiDetailItem
-	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var stat bool
-	if conn != nil {
-		stat = UpdateDokumentDetailMYSQL(sqlData, conn)
-	}
-	if stat == true {
-		w.WriteHeader(http.StatusNoContent)
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-	}
-}
-
-func DeleteDokumentDetail(w http.ResponseWriter, r *http.Request) {
-	Respbody, _ := ioutil.ReadAll(r.Body)
-	var sqlData structs.DokumentiDetailItem
-	_ = json.Unmarshal(Respbody, &sqlData)
-
-	conn := CreateConnectionMSSQLDB()
-	defer conn.Close()
-	var stat bool
-	if conn != nil {
-		stat = DeleteDokumentDetailMYSQL(sqlData, conn)
-	}
-	if stat == true {
-		w.WriteHeader(http.StatusNoContent)
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-	}
-}
+//-------------------------------------------------------------------------------------

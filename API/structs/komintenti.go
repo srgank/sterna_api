@@ -1,7 +1,7 @@
 package structs
 
 type KomintentiItem struct {
-	Id         int64  `bson:"id" json:"id"`
+	Id         string `bson:"id" json:"id"`
 	Sifra      string `bson:"sifra" json:"sifra"`
 	Naziv      string `bson:"naziv" json:"naziv"`
 	Adresa     string `bson:"adresa" json:"adresa"`
@@ -14,7 +14,7 @@ type KomintentiItem struct {
 	Mb         string `bson:"mb" json:"mb"`
 	Zabeleska1 string `bson:"zabeleska1" json:"zabeleska1"`
 	Zabeleska2 string `bson:"zabeleska2" json:"zabeleska2"`
-	Rabat      int64  `bson:"rabat" json:"rabat"`
+	Rabat      string `bson:"rabat" json:"rabat"`
 	Grad       string `bson:"grad" json:"grad"`
 }
 
