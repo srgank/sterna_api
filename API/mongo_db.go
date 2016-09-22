@@ -299,3 +299,99 @@ func UpdateDokumentMYSQLMongo(inputData structs.DokumentiItem) bool {
 		return true
 	}
 }
+
+//GetDokumentiDetailListMYSQLMongo
+//InsertNewDokumentDetailMYSQLMongo
+//UpdateDokumentDetailMYSQLMongo
+//DeleteDokumentiDetailMYSQLMongo
+
+//-------------Dokumenti----------------------------------------------------------------------------------------------------------------------
+
+func GetDokumentiDetailListMYSQLMongo(searchData structs.SearchByItem) (bool, string) {
+	var output structs.DokumentiDetail
+	var result []structs.DokumentiDetailItem
+	sessionCopy := session.Copy()
+	defer sessionCopy.Close()
+	c := sessionCopy.DB(database_).C("dokumenti_detail")
+	i_limit, _ := strconv.Atoi(searchData.Limit)
+	i_offset, _ := strconv.Atoi(searchData.Offset)
+	var query bson.M
+	query = bson.M{"DOCUMENT_ID": searchData.Dok_ID, "DOCUMENT_TIP": searchData.Dok_TIP}
+
+	err := c.Find(query).Limit(i_limit).Skip(i_offset).All(&result)
+	if err != nil {
+		return false, ""
+	} else {
+		output.Properties = result
+		modules, _ := json.Marshal(output)
+		modules_json := string(modules)
+		fmt.Println(modules_json)
+		return true, modules_json
+	}
+}
+
+func DeleteDokumentiDetailMYSQLMongo(data structs.DokumentiDetail) bool {
+	//	var result SisDigitalSignage
+	st := data.Properties
+	sessionCopy := session.Copy()
+	defer sessionCopy.Close()
+	c := sessionCopy.DB(database_).C("dokumenti_detail")
+
+	x := c.Bulk()
+	for i := range st {
+		item := st[i]
+		x.Remove(bson.D{{"TID", item.TID}})
+	}
+	_, err := x.Run()
+
+	if err != nil {
+		// panic(err)
+		return false
+	} else {
+		return true
+	}
+}
+
+func InsertNewDokumentDetailMYSQLMongo(data structs.DokumentiDetail) bool {
+
+	st := data.Properties
+	sessionCopy := session.Copy()
+	defer sessionCopy.Close()
+	c := sessionCopy.DB(database_).C("dokumenti_detail")
+
+	x := c.Bulk()
+	for i := range st {
+		item := st[i]
+		item.TID = uuid.NewV4().String()
+		x.Insert(item)
+	}
+	_, err := x.Run()
+
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+func UpdateDokumentDetailMYSQLMongo(data structs.DokumentiDetail) bool {
+	st := data.Properties
+	sessionCopy := session.Copy()
+	defer sessionCopy.Close()
+	c := sessionCopy.DB(database_).C("dokumenti_detail")
+
+	x := c.Bulk()
+	for i := range st {
+		item := st[i]
+		colQuerier := bson.M{"TID": item.TID}
+		change := item
+		x.Update(colQuerier, change)
+	}
+	_, err := x.Run()
+
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}

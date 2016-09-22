@@ -41,10 +41,10 @@ func main() {
 	m.Post("/update_dokumenti", UpdateDokumentMongo)
 	m.Post("/delete_dokumenti", DeleteDokumentMongo)
 
-	//	m.Post("/get_dokumenti_detail_list", GetDokumentDetailListMongo)
-	//	m.Post("/insert_dokumenti_detail", InsertNewDokumentDetailMongo)
-	//	m.Post("/update_dokumenti_detail", UpdateDokumentDetailMongo)
-	//	m.Post("/delete_dokumenti_detail", DeleteDokumentDetailMongo)
+	m.Post("/get_dokumenti_detail_list", GetDokumentDetailListMongo)
+	m.Post("/insert_dokumenti_detail", InsertNewDokumentDetailMongo)
+	m.Post("/update_dokumenti_detail", UpdateDokumentDetailMongo)
+	m.Post("/delete_dokumenti_detail", DeleteDokumentDetailMongo)
 
 	http.ListenAndServe(":5002", m)
 }

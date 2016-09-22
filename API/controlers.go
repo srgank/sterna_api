@@ -173,3 +173,55 @@ func DeleteDokumentMongo(w http.ResponseWriter, r *http.Request) {
 }
 
 //-------------------------------------------------------------------------------------
+
+func GetDokumentDetailListMongo(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	fmt.Println("Respbody", Respbody)
+	var sqlData structs.SearchByItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+	fmt.Println("sqlData", sqlData)
+	_, s := GetDokumentiDetailListMYSQLMongo(sqlData)
+
+	fmt.Println(s)
+	w.Write([]byte(s))
+}
+
+func InsertNewDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiDetail
+	_ = json.Unmarshal(Respbody, &sqlData)
+
+	var stat bool
+	stat = InsertNewDokumentDetailMYSQLMongo(sqlData)
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func UpdateDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiDetail
+	_ = json.Unmarshal(Respbody, &sqlData)
+	var stat bool
+	stat = UpdateDokumentDetailMYSQLMongo(sqlData)
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+func DeleteDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	var sqlData structs.DokumentiDetail
+	_ = json.Unmarshal(Respbody, &sqlData)
+	var stat bool
+	stat = DeleteDokumentiDetailMYSQLMongo(sqlData)
+	if stat == true {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
