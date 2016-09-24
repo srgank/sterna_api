@@ -7,7 +7,7 @@ type ArticleItem struct {
 	Edm            string `bson:"edm" json:"edm"`
 	Ref            string `bson:"ref" json:"ref"`
 	Kataloski_broj string `bson:"kataloski_broj" json:"kataloski_broj"`
-	Ddv            string `bson:"ddv" json:"ddv"`
+	Ddv            int64  `bson:"ddv" json:"ddv"`
 	Proizvoditel   string `bson:"proizvoditel" json:"proizvoditel"`
 	Kategorija     string `bson:"kategorija" json:"kategorija"`
 }

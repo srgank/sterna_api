@@ -2,8 +2,8 @@ package structs
 
 type DokumentiItem struct {
 	TID                string `bson:"TID" json:"TID"`
-	DOCUMENT_ID        string `bson:"DOCUMENT_ID" json:"DOCUMENT_ID"`
-	DOCUMENT_TIP       string `bson:"DOCUMENT_TIP" json:"DOCUMENT_TIP"`
+	DOCUMENT_ID        int64  `bson:"DOCUMENT_ID" json:"DOCUMENT_ID"`
+	DOCUMENT_TIP       int64  `bson:"DOCUMENT_TIP" json:"DOCUMENT_TIP"`
 	TD                 string `bson:"TD" json:"TD"`
 	TDS                string `bson:"TDS" json:"TDS"`
 	KOMINTENT_ID       string `bson:"KOMINTENT_ID" json:"KOMINTENT_ID"`

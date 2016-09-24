@@ -138,9 +138,10 @@ func InsertNewDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	var stat bool
-	stat = InsertNewDokumentMYSQLMongo(sqlData)
+	var s string
+	stat, s = InsertNewDokumentMYSQLMongo(sqlData)
 	if stat == true {
-		w.WriteHeader(http.StatusNoContent)
+		w.Write([]byte(s))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 	}

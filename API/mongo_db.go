@@ -241,7 +241,7 @@ func GetDokumentiListMYSQLMongo(searchData structs.SearchByItem) (bool, string) 
 		}
 	}
 
-	err := c.Find(query).Limit(i_limit).Skip(i_offset).All(&result)
+	err := c.Find(query).Sort("-DOCUMENT_ID").Limit(i_limit).Skip(i_offset).All(&result)
 	if err != nil {
 		return false, ""
 	} else {
@@ -269,18 +269,30 @@ func DeleteDokumentiMYSQLMongo(data structs.DokumentiItem) bool {
 	}
 }
 
-func InsertNewDokumentMYSQLMongo(data structs.DokumentiItem) bool {
+func InsertNewDokumentMYSQLMongo(data structs.DokumentiItem) (bool, string) {
+	var output structs.Dokumenti
+	var result []structs.DokumentiItem
+	var findRes structs.DokumentiItem
 
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
 	c := sessionCopy.DB(database_).C("dokumenti")
 	data.TID = uuid.NewV4().String()
+	err := c.Find(bson.M{"DOCUMENT_TIP": data.DOCUMENT_TIP}).Sort("-DOCUMENT_ID").One(&findRes)
+	fmt.Println("findRes", findRes, "err", err)
+	findRes.DOCUMENT_ID = findRes.DOCUMENT_ID + 1
+	data.DOCUMENT_ID = findRes.DOCUMENT_ID
+	result = append(result, findRes)
 	err2 := c.Insert(data)
 
 	if err2 != nil {
-		return false
+		return false, ""
 	} else {
-		return true
+		output.Properties = result
+		modules, _ := json.Marshal(output)
+		modules_json := string(modules)
+		fmt.Println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV", modules_json)
+		return true, modules_json
 	}
 }
 
@@ -315,10 +327,13 @@ func GetDokumentiDetailListMYSQLMongo(searchData structs.SearchByItem) (bool, st
 	c := sessionCopy.DB(database_).C("dokumenti_detail")
 	i_limit, _ := strconv.Atoi(searchData.Limit)
 	i_offset, _ := strconv.Atoi(searchData.Offset)
-	var query bson.M
-	query = bson.M{"DOCUMENT_ID": searchData.Dok_ID, "DOCUMENT_TIP": searchData.Dok_TIP}
+	i_id, _ := strconv.Atoi(searchData.Dok_ID)
+	i_tip, _ := strconv.Atoi(searchData.Dok_TIP)
 
-	err := c.Find(query).Limit(i_limit).Skip(i_offset).All(&result)
+	var query bson.M
+	query = bson.M{"DOCUMENT_ID": i_id, "DOCUMENT_TIP": i_tip}
+
+	err := c.Find(query).Sort("SUB_TID").Limit(i_limit).Skip(i_offset).All(&result)
 	if err != nil {
 		return false, ""
 	} else {
@@ -360,10 +375,14 @@ func InsertNewDokumentDetailMYSQLMongo(data structs.DokumentiDetail) bool {
 	c := sessionCopy.DB(database_).C("dokumenti_detail")
 
 	x := c.Bulk()
+	var subTid int64
+	subTid = 0
 	for i := range st {
 		item := st[i]
 		item.TID = uuid.NewV4().String()
+		item.SUB_TID = subTid
 		x.Insert(item)
+		subTid++
 	}
 	_, err := x.Run()
 
