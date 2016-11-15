@@ -26,6 +26,11 @@ func ClassicA() *martini.ClassicMartini {
 func main() {
 	InitMongoDB()
 	m := ClassicA()
+	CreateJWTToken("bar")
+	m.Use(ValidateToken)
+
+	m.Post("/login", Login)
+
 	m.Post("/get_article_list", GetArticleListMongo)
 	m.Post("/insert_article", InsertNewArticleMongo)
 	m.Post("/update_article", UpdateArticleMongo)

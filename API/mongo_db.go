@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	//	"fmt"
 	"strconv"
 	"time"
 
@@ -47,14 +47,66 @@ func connectMongoDB(url string, user string, pass string, db string) (*mgo.Sessi
 	}
 }
 
+//-------------Accounts----------------------------------------------------------------------------------------------------------------------
+
+func GetAccountItemByTokenMongo(mtoken string) (bool, structs.Accounts) {
+
+	var result structs.Accounts
+	sessionCopy := session.Copy()
+	defer sessionCopy.Close()
+	c := sessionCopy.DB(database_).C("accounts")
+	var query bson.M
+	query = bson.M{"token": mtoken}
+
+	err := c.Find(query).One(&result)
+	if err != nil {
+		return false, result
+	} else {
+		return true, result
+	}
+}
+
+//-------------Login----------------------------------------------------------------------------------------------------------------------
+
+func GetLogin(searchData structs.LoginDataRequest) (bool, string) {
+	var output_ structs.LoginRespond
+
+	var output_item structs.LoginDataRespond
+	var output []structs.LoginDataRespond
+	var result structs.Accounts
+	sessionCopy := session.Copy()
+	defer sessionCopy.Close()
+	c := sessionCopy.DB(database_).C("accounts")
+	var query bson.M
+	query = bson.M{"user_name": searchData.UserName, "password": searchData.Password}
+
+	err := c.Find(query).One(&result)
+	if err != nil {
+		return false, ""
+	} else {
+		output_item.DataBasePrefix = result.DataBasePrefix
+		output_item.Token = result.Token
+		output_item.ValitTo = result.ValitTo
+		output_item.Company = result.Company
+
+		output = append(output, output_item)
+
+		output_.Properties = output
+		modules, _ := json.Marshal(output_)
+		modules_json := string(modules)
+		//		fmt.Println(modules_json)
+		return true, modules_json
+	}
+}
+
 //-------------Artikli----------------------------------------------------------------------------------------------------------------------
 
-func GetArticleListMYSQLMongo(searchData structs.SearchByItem) (bool, string) {
+func GetArticleListMYSQLMongo(searchData structs.SearchByItem, database_prefix string, userName string) (bool, string) {
 	var output structs.Article
 	var result []structs.ArticleItem
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("artikli")
+	c := sessionCopy.DB(database_).C(database_prefix + "_artikli")
 	i_limit, _ := strconv.Atoi(searchData.Limit)
 	i_offset, _ := strconv.Atoi(searchData.Offset)
 	var query bson.M
@@ -79,16 +131,16 @@ func GetArticleListMYSQLMongo(searchData structs.SearchByItem) (bool, string) {
 		output.Properties = result
 		modules, _ := json.Marshal(output)
 		modules_json := string(modules)
-		fmt.Println(modules_json)
+		//		fmt.Println(modules_json)
 		return true, modules_json
 	}
 }
 
-func DeleteArticleMYSQLMongo(data structs.ArticleItem) bool {
+func DeleteArticleMYSQLMongo(data structs.ArticleItem, database_prefix string, userName string) bool {
 	//	var result SisDigitalSignage
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("artikli")
+	c := sessionCopy.DB(database_).C(database_prefix + "_artikli")
 
 	err := c.Remove(bson.D{{"id", data.Id}})
 
@@ -100,11 +152,11 @@ func DeleteArticleMYSQLMongo(data structs.ArticleItem) bool {
 	}
 }
 
-func InsertNewArticleMYSQLMongo(data structs.ArticleItem) bool {
+func InsertNewArticleMYSQLMongo(data structs.ArticleItem, database_prefix string, userName string) bool {
 
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("artikli")
+	c := sessionCopy.DB(database_).C(database_prefix + "_artikli")
 	data.Id = uuid.NewV4().String()
 	err2 := c.Insert(data)
 
@@ -115,16 +167,16 @@ func InsertNewArticleMYSQLMongo(data structs.ArticleItem) bool {
 	}
 }
 
-func UpdateArticleMYSQLMongo(inputData structs.ArticleItem) bool {
-	fmt.Println("TTTTT", inputData)
+func UpdateArticleMYSQLMongo(inputData structs.ArticleItem, database_prefix string, userName string) bool {
+	//	fmt.Println("TTTTT", inputData)
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("artikli")
+	c := sessionCopy.DB(database_).C(database_prefix + "_artikli")
 
 	colQuerier := bson.M{"id": inputData.Id}
 	change := inputData
 	err := c.Update(colQuerier, change)
-	fmt.Println("errr", err)
+	//	fmt.Println("errr", err)
 	if err != nil {
 		return false
 	} else {
@@ -134,12 +186,12 @@ func UpdateArticleMYSQLMongo(inputData structs.ArticleItem) bool {
 
 //-------------Komintenti----------------------------------------------------------------------------------------------------------------------
 
-func GetKomintentiListMYSQLMongo(searchData structs.SearchByItem) (bool, string) {
+func GetKomintentiListMYSQLMongo(searchData structs.SearchByItem, database_prefix string, userName string) (bool, string) {
 	var output structs.Komintenti
 	var result []structs.KomintentiItem
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("komintenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_komintenti")
 	i_limit, _ := strconv.Atoi(searchData.Limit)
 	i_offset, _ := strconv.Atoi(searchData.Offset)
 	var query bson.M
@@ -164,16 +216,16 @@ func GetKomintentiListMYSQLMongo(searchData structs.SearchByItem) (bool, string)
 		output.Properties = result
 		modules, _ := json.Marshal(output)
 		modules_json := string(modules)
-		fmt.Println(modules_json)
+		//		fmt.Println(modules_json)
 		return true, modules_json
 	}
 }
 
-func DeleteKomintentiMYSQLMongo(data structs.KomintentiItem) bool {
+func DeleteKomintentiMYSQLMongo(data structs.KomintentiItem, database_prefix string, userName string) bool {
 	//	var result SisDigitalSignage
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("komintenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_komintenti")
 
 	err := c.Remove(bson.D{{"id", data.Id}})
 
@@ -185,11 +237,11 @@ func DeleteKomintentiMYSQLMongo(data structs.KomintentiItem) bool {
 	}
 }
 
-func InsertNewKomintentiMYSQLMongo(data structs.KomintentiItem) bool {
+func InsertNewKomintentiMYSQLMongo(data structs.KomintentiItem, database_prefix string, userName string) bool {
 
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("komintenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_komintenti")
 	data.Id = uuid.NewV4().String()
 	err2 := c.Insert(data)
 
@@ -200,15 +252,15 @@ func InsertNewKomintentiMYSQLMongo(data structs.KomintentiItem) bool {
 	}
 }
 
-func UpdateKomintentiMYSQLMongo(inputData structs.KomintentiItem) bool {
+func UpdateKomintentiMYSQLMongo(inputData structs.KomintentiItem, database_prefix string, userName string) bool {
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("komintenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_komintenti")
 
 	colQuerier := bson.M{"id": inputData.Id}
 	change := inputData
 	err := c.Update(colQuerier, change)
-	fmt.Println("errr", err)
+	//	fmt.Println("errr", err)
 	if err != nil {
 		return false
 	} else {
@@ -218,27 +270,21 @@ func UpdateKomintentiMYSQLMongo(inputData structs.KomintentiItem) bool {
 
 //-------------Dokumenti----------------------------------------------------------------------------------------------------------------------
 
-func GetDokumentiListMYSQLMongo(searchData structs.SearchByItem) (bool, string) {
+func GetDokumentiListMYSQLMongo(searchData structs.SearchByItem, database_prefix string, userName string) (bool, string) {
 	var output structs.Dokumenti
 	var result []structs.DokumentiItem
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti")
 	i_limit, _ := strconv.Atoi(searchData.Limit)
 	i_offset, _ := strconv.Atoi(searchData.Offset)
+	i_dok_tip, _ := strconv.Atoi(searchData.Dok_TIP)
+
 	var query bson.M
 	if searchData.SearchBy == "artikal" {
-		if searchData.SearchName != "" {
-			query = bson.M{"artikal": bson.M{"$regex": searchData.SearchName}}
-		} else {
-			query = bson.M{}
-		}
+		query = bson.M{"KOMINTENT_NAZIV": bson.M{"$regex": searchData.SearchName}, "DOCUMENT_TIP": i_dok_tip}
 	} else {
-		if searchData.SearchName != "" {
-			query = bson.M{"id": bson.M{"$regex": searchData.SearchName}}
-		} else {
-			query = bson.M{}
-		}
+		query = bson.M{"KOMINTENT_ID": bson.M{"$regex": searchData.SearchName}, "DOCUMENT_TIP": i_dok_tip}
 	}
 
 	err := c.Find(query).Sort("-DOCUMENT_ID").Limit(i_limit).Skip(i_offset).All(&result)
@@ -248,16 +294,16 @@ func GetDokumentiListMYSQLMongo(searchData structs.SearchByItem) (bool, string) 
 		output.Properties = result
 		modules, _ := json.Marshal(output)
 		modules_json := string(modules)
-		fmt.Println(modules_json)
+		//		fmt.Println(modules_json)
 		return true, modules_json
 	}
 }
 
-func DeleteDokumentiMYSQLMongo(data structs.DokumentiItem) bool {
+func DeleteDokumentiMYSQLMongo(data structs.DokumentiItem, database_prefix string, userName string) bool {
 	//	var result SisDigitalSignage
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti")
 
 	err := c.Remove(bson.D{{"TID", data.TID}})
 
@@ -269,17 +315,17 @@ func DeleteDokumentiMYSQLMongo(data structs.DokumentiItem) bool {
 	}
 }
 
-func InsertNewDokumentMYSQLMongo(data structs.DokumentiItem) (bool, string) {
+func InsertNewDokumentMYSQLMongo(data structs.DokumentiItem, database_prefix string, userName string) (bool, string) {
 	var output structs.Dokumenti
 	var result []structs.DokumentiItem
 	var findRes structs.DokumentiItem
 
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti")
 	data.TID = uuid.NewV4().String()
-	err := c.Find(bson.M{"DOCUMENT_TIP": data.DOCUMENT_TIP}).Sort("-DOCUMENT_ID").One(&findRes)
-	fmt.Println("findRes", findRes, "err", err)
+	c.Find(bson.M{"DOCUMENT_TIP": data.DOCUMENT_TIP}).Sort("-DOCUMENT_ID").One(&findRes)
+	//	fmt.Println("findRes", findRes, "err", err)
 	findRes.DOCUMENT_ID = findRes.DOCUMENT_ID + 1
 	data.DOCUMENT_ID = findRes.DOCUMENT_ID
 	result = append(result, findRes)
@@ -291,20 +337,20 @@ func InsertNewDokumentMYSQLMongo(data structs.DokumentiItem) (bool, string) {
 		output.Properties = result
 		modules, _ := json.Marshal(output)
 		modules_json := string(modules)
-		fmt.Println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV", modules_json)
+		//		fmt.Println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV", modules_json)
 		return true, modules_json
 	}
 }
 
-func UpdateDokumentMYSQLMongo(inputData structs.DokumentiItem) bool {
+func UpdateDokumentMYSQLMongo(inputData structs.DokumentiItem, database_prefix string, userName string) bool {
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti")
 
 	colQuerier := bson.M{"TID": inputData.TID}
 	change := inputData
 	err := c.Update(colQuerier, change)
-	fmt.Println("errr", err)
+	//	fmt.Println("errr", err)
 	if err != nil {
 		return false
 	} else {
@@ -319,12 +365,12 @@ func UpdateDokumentMYSQLMongo(inputData structs.DokumentiItem) bool {
 
 //-------------Dokumenti----------------------------------------------------------------------------------------------------------------------
 
-func GetDokumentiDetailListMYSQLMongo(searchData structs.SearchByItem) (bool, string) {
+func GetDokumentiDetailListMYSQLMongo(searchData structs.SearchByItem, database_prefix string, userName string) (bool, string) {
 	var output structs.DokumentiDetail
 	var result []structs.DokumentiDetailItem
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti_detail")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti_detail")
 	i_limit, _ := strconv.Atoi(searchData.Limit)
 	i_offset, _ := strconv.Atoi(searchData.Offset)
 	i_id, _ := strconv.Atoi(searchData.Dok_ID)
@@ -340,17 +386,17 @@ func GetDokumentiDetailListMYSQLMongo(searchData structs.SearchByItem) (bool, st
 		output.Properties = result
 		modules, _ := json.Marshal(output)
 		modules_json := string(modules)
-		fmt.Println(modules_json)
+		//		fmt.Println(modules_json)
 		return true, modules_json
 	}
 }
 
-func DeleteDokumentiDetailMYSQLMongo(data structs.DokumentiDetail) bool {
+func DeleteDokumentiDetailMYSQLMongo(data structs.DokumentiDetail, database_prefix string, userName string) bool {
 	//	var result SisDigitalSignage
 	st := data.Properties
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti_detail")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti_detail")
 
 	x := c.Bulk()
 	for i := range st {
@@ -367,12 +413,12 @@ func DeleteDokumentiDetailMYSQLMongo(data structs.DokumentiDetail) bool {
 	}
 }
 
-func InsertNewDokumentDetailMYSQLMongo(data structs.DokumentiDetail) bool {
+func InsertNewDokumentDetailMYSQLMongo(data structs.DokumentiDetail, database_prefix string, userName string) bool {
 
 	st := data.Properties
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti_detail")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti_detail")
 
 	x := c.Bulk()
 	var subTid int64
@@ -393,11 +439,11 @@ func InsertNewDokumentDetailMYSQLMongo(data structs.DokumentiDetail) bool {
 	}
 }
 
-func UpdateDokumentDetailMYSQLMongo(data structs.DokumentiDetail) bool {
+func UpdateDokumentDetailMYSQLMongo(data structs.DokumentiDetail, database_prefix string, userName string) bool {
 	st := data.Properties
 	sessionCopy := session.Copy()
 	defer sessionCopy.Close()
-	c := sessionCopy.DB(database_).C("dokumenti_detail")
+	c := sessionCopy.DB(database_).C(database_prefix + "_dokumenti_detail")
 
 	x := c.Bulk()
 	for i := range st {

@@ -27,6 +27,7 @@ type DokumentiDetailItem struct {
 	I_CENA_SO_DDV_KALK  string `bson:"I_CENA_SO_DDV_KALK" json:"I_CENA_SO_DDV_KALK"`
 	I_CENA_SO_DDV_PROD  string `bson:"I_CENA_SO_DDV_PROD" json:"I_CENA_SO_DDV_PROD"`
 	I_DDV_PROD          string `bson:"I_DDV_PROD" json:"I_DDV_PROD"`
+	I_PROD_IZNOS_SO_DDV string `bson:"I_PROD_IZNOS_SO_DDV" json:"I_PROD_IZNOS_SO_DDV"`
 	KOL                 string `bson:"KOL" json:"KOL"`
 	MAG_ID              string `bson:"MAG_ID" json:"MAG_ID"`
 	STATUS              string `bson:"STATUS" json:"STATUS"`

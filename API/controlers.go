@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	//	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -12,25 +12,42 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func GetArticleListMongo(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("Respbody", Respbody)
+	var sqlData structs.LoginDataRequest
+	_ = json.Unmarshal(Respbody, &sqlData)
+	//	fmt.Println("sqlData", sqlData)
+	_, s := GetLogin(sqlData)
+
+	//	fmt.Println(s)
+	w.Write([]byte(s))
+}
+
+func GetArticleListMongo(w http.ResponseWriter, r *http.Request) {
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	//	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-	fmt.Println("sqlData", sqlData)
-	_, s := GetArticleListMYSQLMongo(sqlData)
+	//	fmt.Println("sqlData", sqlData)
+	_, s := GetArticleListMYSQLMongo(sqlData, dpx, usr)
 
-	fmt.Println(s)
+	//	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
 func InsertNewArticleMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	var stat bool
-	stat = InsertNewArticleMYSQLMongo(sqlData)
+	stat = InsertNewArticleMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -40,10 +57,13 @@ func InsertNewArticleMongo(w http.ResponseWriter, r *http.Request) {
 
 func UpdateArticleMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = UpdateArticleMYSQLMongo(sqlData)
+	stat = UpdateArticleMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -53,10 +73,13 @@ func UpdateArticleMongo(w http.ResponseWriter, r *http.Request) {
 
 func DeleteArticleMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.ArticleItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = DeleteArticleMYSQLMongo(sqlData)
+	stat = DeleteArticleMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -68,23 +91,29 @@ func DeleteArticleMongo(w http.ResponseWriter, r *http.Request) {
 
 func GeKomintentiListMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("Respbody", Respbody)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
+	//	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-	fmt.Println("sqlData", sqlData)
-	_, s := GetKomintentiListMYSQLMongo(sqlData)
+	//	fmt.Println("sqlData", sqlData)
+	_, s := GetKomintentiListMYSQLMongo(sqlData, dpx, usr)
 
-	fmt.Println(s)
+	//	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
 func InsertNewKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	var stat bool
-	stat = InsertNewKomintentiMYSQLMongo(sqlData)
+	stat = InsertNewKomintentiMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -94,10 +123,13 @@ func InsertNewKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 
 func UpdateKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = UpdateKomintentiMYSQLMongo(sqlData)
+	stat = UpdateKomintentiMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -107,10 +139,13 @@ func UpdateKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 
 func DeleteKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.KomintentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = DeleteKomintentiMYSQLMongo(sqlData)
+	stat = DeleteKomintentiMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -122,24 +157,30 @@ func DeleteKomintentiMongo(w http.ResponseWriter, r *http.Request) {
 
 func GetDokumentListMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("Respbody", Respbody)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
+	//	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-	fmt.Println("sqlData", sqlData)
-	_, s := GetDokumentiListMYSQLMongo(sqlData)
+	//	fmt.Println("sqlData", sqlData)
+	_, s := GetDokumentiListMYSQLMongo(sqlData, dpx, usr)
 
-	fmt.Println(s)
+	//	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
 func InsertNewDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.DokumentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	var stat bool
 	var s string
-	stat, s = InsertNewDokumentMYSQLMongo(sqlData)
+	stat, s = InsertNewDokumentMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.Write([]byte(s))
 	} else {
@@ -149,10 +190,13 @@ func InsertNewDokumentMongo(w http.ResponseWriter, r *http.Request) {
 
 func UpdateDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.DokumentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = UpdateDokumentMYSQLMongo(sqlData)
+	stat = UpdateDokumentMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -162,10 +206,13 @@ func UpdateDokumentMongo(w http.ResponseWriter, r *http.Request) {
 
 func DeleteDokumentMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.DokumentiItem
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = DeleteDokumentiMYSQLMongo(sqlData)
+	stat = DeleteDokumentiMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -177,23 +224,29 @@ func DeleteDokumentMongo(w http.ResponseWriter, r *http.Request) {
 
 func GetDokumentDetailListMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("Respbody", Respbody)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
+	//	fmt.Println("Respbody", Respbody)
 	var sqlData structs.SearchByItem
 	_ = json.Unmarshal(Respbody, &sqlData)
-	fmt.Println("sqlData", sqlData)
-	_, s := GetDokumentiDetailListMYSQLMongo(sqlData)
+	//	fmt.Println("sqlData", sqlData)
+	_, s := GetDokumentiDetailListMYSQLMongo(sqlData, dpx, usr)
 
-	fmt.Println(s)
+	//	fmt.Println(s)
 	w.Write([]byte(s))
 }
 
 func InsertNewDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.DokumentiDetail
 	_ = json.Unmarshal(Respbody, &sqlData)
 
 	var stat bool
-	stat = InsertNewDokumentDetailMYSQLMongo(sqlData)
+	stat = InsertNewDokumentDetailMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -203,10 +256,13 @@ func InsertNewDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
 
 func UpdateDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.DokumentiDetail
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = UpdateDokumentDetailMYSQLMongo(sqlData)
+	stat = UpdateDokumentDetailMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -216,13 +272,33 @@ func UpdateDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
 
 func DeleteDokumentDetailMongo(w http.ResponseWriter, r *http.Request) {
 	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
 	var sqlData structs.DokumentiDetail
 	_ = json.Unmarshal(Respbody, &sqlData)
 	var stat bool
-	stat = DeleteDokumentiDetailMYSQLMongo(sqlData)
+	stat = DeleteDokumentiDetailMYSQLMongo(sqlData, dpx, usr)
 	if stat == true {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
+}
+
+//--------------------------------------------------------------------------------------
+
+func GetAccountListMongo(w http.ResponseWriter, r *http.Request) {
+	Respbody, _ := ioutil.ReadAll(r.Body)
+	dpx := r.Header.Get("database_prefix")
+	usr := r.Header.Get("user_name")
+
+	//	fmt.Println("Respbody", Respbody)
+	var sqlData structs.SearchByItem
+	_ = json.Unmarshal(Respbody, &sqlData)
+	//	fmt.Println("sqlData", sqlData)
+	_, s := GetDokumentiDetailListMYSQLMongo(sqlData, dpx, usr)
+
+	//	fmt.Println(s)
+	w.Write([]byte(s))
 }
